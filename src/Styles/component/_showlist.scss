@@ -1,0 +1,12 @@
+.shows {
+  &__container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    // align-content: space-around;
+  }
+
+  &__list-items {
+    flex-direction: row;
+  }
+} 

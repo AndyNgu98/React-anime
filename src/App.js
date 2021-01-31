@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import React, {useContext, useEffect} from 'react'
+import Layout from './Components/Layout/Layout';
+import Home from './Components/Home/Home';
+import { Route, Switch} from 'react-router-dom';
+import User from './Components/User/User';
+import {AuthContext} from './Context/auth-context'
+import Auth from './Components/Auth/Auth'
+import Logout from './Components/Logout/Logout'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+  const {idToken, checkAuthentication} = useContext(AuthContext)
+
+  useEffect(() => {
+    checkAuthentication()
+  }, [checkAuthentication])
+
+  let routes = <>
+    <Route path="/login" component={Auth}/>
+    <Route path="/" exact component={Home}/>
+  </>
+
+  if(idToken !=null) {
+    routes = (
+      <>
+        <Route path="/logout" component={Logout}/>
+        <Route path="/user" component={User}/>
+        <Route path="/login" component={Auth}/>
+        <Route path="/" exact component={Home}/>
+      </>
+    )
+  }
+  
+  let content = (
+    <Layout>
+      <Switch>
+        {routes}
+      </Switch>
+    </Layout>
+  )
+  
+  return content
 }
 
 export default App;

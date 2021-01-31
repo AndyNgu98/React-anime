@@ -1,0 +1,12 @@
+.searchs {
+  &__container {
+    display: flex;
+  }
+
+  &__list-items {
+    flex-direction: row;
+    justify-content: space-evenly;
+
+  }
+
+} 

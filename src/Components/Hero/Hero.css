@@ -1,0 +1,21 @@
+/* .hero-container {
+
+} */
+.hero-img {
+  background-attachment: fixed;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.824); /*dim the background*/
+
+}
+
+.hero-title {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bolder;
+}
+
+.title {
+  text-align: center;
+}
