@@ -1,17 +1,21 @@
 import React from 'react'
-import AnimeCard from '../../UI/AnimeCard'
 
- const ShowAnime = (props) => {
+const ShowSearch = (props) => {
+
   return (
-    <div>
-      <h2>Your Search</h2>
-      {props.fetchanime.map((anime) => (
-            <AnimeCard
-            anime={anime}
-            key={anime.mal_id}/>   
-      ))}
+    <div className='search__container'>
+      {
+        props.fetchanime.map((anime) => (
+          <ul className='search__item' key={anime.mal_id}>
+            <li>
+              <img src={anime.image_url} alt='search__image' onClick={() => props.selectShow(anime.mal_id)}/>
+            </li>
+            <button className='search__btn ' onClick={() => props.selectedId(anime.mal_id)}>Add to favorite</button> 
+          </ul> 
+        ))
+      }
     </div>
-      )
+  )
 }
 
-export default ShowAnime
+export default ShowSearch

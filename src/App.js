@@ -7,6 +7,7 @@ import User from './Components/User/User';
 import {AuthContext} from './Context/auth-context'
 import Auth from './Components/Auth/Auth'
 import Logout from './Components/Logout/Logout'
+import AnimePreview from './Components/AnimePrieview/AnimePreview'
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
   }, [checkAuthentication])
 
   let routes = <>
+    <Route path={`/anime-preview/:id`} exact component={AnimePreview}/>
     <Route path="/login" component={Auth}/>
     <Route path="/" exact component={Home}/>
   </>
@@ -24,6 +26,7 @@ function App() {
   if(idToken !=null) {
     routes = (
       <>
+        <Route path={`/anime-preview/:id`} exact component={AnimePreview}/>
         <Route path="/logout" component={Logout}/>
         <Route path="/user" component={User}/>
         <Route path="/login" component={Auth}/>

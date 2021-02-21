@@ -3,10 +3,38 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    // align-content: space-around;
+    padding-bottom: 3rem;
   }
-
   &__list-items {
     flex-direction: row;
   }
 } 
+
+.favourites {
+  text-align: center;
+  &__list-item {
+    text-align: center;
+    padding-bottom: 3rem;
+  }
+
+  &__btn-remove {
+    text-align: center;
+    border-radius: 4px;
+  }
+}
+
+.search {
+  &__container {
+    text-align: center;
+    padding-bottom: 3rem;
+
+  }
+
+  &__input {
+    border-radius: 25px;
+    border: 2px solid rgba(255, 0, 0, 0.733);
+    padding: 20px;
+    width: 200px;
+    height: 40px;
+  }
+}

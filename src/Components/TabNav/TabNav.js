@@ -3,7 +3,7 @@ import React from 'react'
 const TabNav = (props) => {
   return (
     <>
-      <div className='tabs is-centered is-large'>
+      <div className='tabs is-centered'>
         <ul>
         {
           props.tabs.map(tab => {
@@ -13,10 +13,10 @@ const TabNav = (props) => {
               // return the tab which is active
               <li className="nav-item" key={ tab }>
                 {/* on click set the tab to the tab you just clicked */}
-                <a className={"nav-link " + active} onClick={ () => props.setSelected(tab) }>
+                <button className={"nav-link " + active} onClick={ () => props.setSelected(tab) }>
                   {/* tab name */}
                   { tab }
-                </a>
+                </button>
               </li>
             );
           })

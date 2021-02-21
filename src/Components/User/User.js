@@ -8,29 +8,38 @@ import News from '../News/News'
 import Favourites from '../Favourites/Favourties'
 import Search from '../Search/Search'
 import ShowSearch from '../ShowSearch/ShowSearch'
+import Recommend from '../Recommended/Recommended'
 
 const User = (props) => {
   
-  const {localId} = useContext(AuthContext)
   const [mostPopular, setMostpopular] = useState([])
   const [search, setSearch] = useState('')
   const [fetchAnime, setFetchanime] = useState([])
   const [selected, setSelected] = useState([])
   const [news, setNews] = useState([])
+  const [favourites, setFavourites] = useState([])
+  const [recommended, setRecommended] = useState([])
+  const {localId} = useContext(AuthContext)
 
   useEffect(() => {
     getAllTime()
     getNews()
-    getFavourite()
+    // setDefaultrecommendations()
+    loadFavourites()
   }, [])
 
+  useEffect(() => {
+    updateRecommendations()
+  },[favourites])
+
+  // PREVENT REFRESH OF PAGE ON SUBMIT
   const handleSearch = (e) => {
     e.preventDefault();
-    // console.log(search)
     getAnime(search)
   }
 
-  const getAnime = (query, id) => {
+  // RETRIEVE ANIME FROM SEARCH BAR
+  const getAnime = (query) => {
     fetch(`https://api.jikan.moe/v3/search/anime?q=${query}&order_by=title&sort=asc&limit=10/.json`)
     .then(response => response.json())
     .then(response => {
@@ -42,49 +51,183 @@ const User = (props) => {
     })
   }
 
+  // RETRIEVE NEWS FROM API
   const getNews = () => {
     axios.get('https://api.jikan.moe/v3/anime/1/news')
     .then(res => {
       const articles = res.data.articles.slice(0,5)
-      // setNews(articles)
+      setNews(articles)
       console.log(articles)
     })
     .catch(error => console.log(error))
   }
 
-  const getFavourite = () => {
-    axios.get(`https://anime-project-7d79f-default-rtdb.europe-west1.firebasedatabase.app/${localId}/.json`)
-    .then((response) => {
-      console.log(response.data)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
-
+  // GET ALL TIME FAVOURITE
   const getAllTime = () => {
     axios.get('https://api.jikan.moe/v3/top/anime/1/favorite')
     .then(response => {
       const popular = response.data.top.slice(0,5)
       setMostpopular(popular)
-
     })
     .catch(error => {
       console.log(error)
     })
   }
 
+
+  // ------------ FAVOURITES FUNCTIONS ---------------- //
+
+  // LOAD FAVOURITES FROM FIREBASE
+  const loadFavourites = () => {
+    axios.get(`https://anime-project-7d79f-default-rtdb.europe-west1.firebasedatabase.app/users/${localId}/favourites/.json`)
+    .then((response) => {
+      // CREATING NEW ARRAY TO STORE THE OBJECTS THAT ARE NOT CURRENTLY INSIDE AN ARRAY
+      const newFavarr = []
+      for(let key in response.data) {
+        // PASSING UNIQUE KEY FROM FIREBASE AND THE DATA OBJECT INSIDE THE ARRAY
+        const { mal_id, title, image_url, sypnopsis, episodes, title_japanese } = response.data[key]
+        newFavarr.push({
+          mal_id,
+          title,
+          episodes,
+          image_url,
+          sypnopsis,
+          title_japanese,
+          // ADDED THE KEY OURSELVES
+          key
+        })
+      }
+      setFavourites(newFavarr)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
+// POST FAVOURITE ANIME TO FIREBASE
+  const postFavourite = (data) => {
+    // CHECK IF ID === ID IN THE STATE
+    // ONLY WANT TO ADD IF IT ISNT ALREADY ADDED
+
+  // IF YOU HAVE IT THEN IT WILL RETURN 1 IF YOU DONT THEN IT WILL RETURN 0
+    const result = favourites.filter((favourite) => {
+      return favourite.mal_id === data.mal_id
+    })
+    // console.log(result.length)
+    // console.log(result)
+    if(result.length === 0) {
+      axios.post(`https://anime-project-7d79f-default-rtdb.europe-west1.firebasedatabase.app/users/${localId}/favourites/.json`, data )
+      // Success
+      .then((response) => {
+        // PASSED FUNCTION FROM USERS
+        loadFavourites()
+        console.log(localId)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    } else {
+      // load modal
+      alert('already exists')
+    }
+  } 
+
+  // ADD 5 DEFAULT RECOMMENDED BASED OF TOP 5
+  // const setDefaultrecommendations = () => {
+  //   if(favourites.length === 0) {
+  //     axios.get('https://api.jikan.moe/v3/anime/1/recommendations')
+  //     .then((res) => {
+  //       const defRec = res.data.recommendations.slice(0,10)
+  //       setRecommended(defRec)
+  //     })
+  //     .catch(err => console.log(err))
+  //   }
+  // }
+
+  // IF THE LEGNTH OF THE ARRAY IS LESS THAN OR EQUAL TO 6 IN THE FAVOURITES THEN PUSH A RECOMMENDED ANIME INTO THE ARRAY ELSE 
+  const updateRecommendations = () => {
+    // if(recommended.length <= 6) {
+      const results = []
+      favourites.forEach((favourite) => {
+      axios.get(`https://api.jikan.moe/v3/anime/${favourite.mal_id}/recommendations`)
+        .then(res => {
+          res.data.recommendations.slice(0,1).forEach(show => results.push(show))
+          // console.log(data)
+          // results.push(data)
+        })
+        .catch(err => console.log(err))
+      })      
+      setRecommended(results)
+    // } else {
+    //   recommended.splice(0,1)
+    //   // alert('we have removed your first one puta')
+    // }
+  
+  }
+
+  // GETS DATA OBJECT ONCLICK AND TRANSFORMING IT INTO WHAT I WANT AND PASSING IT AS USER
+  const selectedId = (id) => {    
+    axios.get(`https://api.jikan.moe/v3/anime/${id}`)
+    .then(response => {
+      const { mal_id, title, image_url, synopsis, episodes, title_japanese, score } = response.data
+      const users = {
+        title,
+        title_japanese,
+        synopsis,
+        episodes,
+        image_url,
+        mal_id,
+        score
+      }
+      postFavourite(users)
+      // getSelectedrecommended(id)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
+  // USING THE KEY FROM FIREBASE THAT IS CLICKED TO DELETE THE OBJECT
+  const onDelete = (key) => {
+    axios.delete(`https://anime-project-7d79f-default-rtdb.europe-west1.firebasedatabase.app/users/${localId}/favourites/${key}/.json`)    
+    .then((response) => {
+      // Deleted from database but still in state so updating state with everything that is not equal to the id that was selected
+      const newFaveourites = favourites.filter(favourites => {
+        return favourites.key !== key
+      })
+      setFavourites(newFaveourites)
+      
+      // setFavourites((prevState) => {
+      //   return prevState.filter(favourites => {
+      //     return favourites.key !== key
+      //   })
+      // })   
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  }
+
+    // ------------ FAVOURITES FUNCTIONS END HERE ---------------- //
+
+    // SENDS US TO THE ENDPOINT
+  const selectShow = (id) => {
+    props.history.push({pathname: `/anime-preview/${id}`})
+  }
+
   return (
     <>
+    {/* SHOWLIST */}
       <div>
-        <ShowList shows={mostPopular} title='Most Popular'/>
+        <ShowList shows={mostPopular} title='Most Popular' selectShow={(id) => selectShow(id)}/>
       </div>
+      {/* TABNAV */}
       <div>
       <TabNav tabs={[ 'News', 'Search', 'Favourites', 'Recommendation']} selected={ selected } setSelected={ setSelected }>
 
         {/* NEWS TAB */}
         <Tab isSelected={ selected === 'News' }>
-          {/* <News newsarticle={news}/> */}
+          <News newsarticle={news}/>
         </Tab>
         
         {/* SEARCH TAB */}
@@ -97,13 +240,18 @@ const User = (props) => {
           fetchanime={fetchAnime}/>
         </div>
         <div>
-        <ShowSearch fetchanime={fetchAnime}/>
+        <ShowSearch fetchanime={fetchAnime} selectedId={selectedId} selectShow={(id) => selectShow(id)}/>
         </div>
         </Tab>
 
         {/* FAVOURITES TAB */}
         <Tab isSelected={ selected === 'Favourites' }>
-          <Favourites/>
+          <Favourites favourites={favourites} onDelete={onDelete}/>
+        </Tab>
+
+        {/* RECOMMENDED TAB */}
+        <Tab isSelected={ selected === 'Recommendation' }>
+          <Recommend recommendations={recommended}/>
         </Tab>
       </TabNav>
       </div>

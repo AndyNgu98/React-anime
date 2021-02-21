@@ -20,7 +20,7 @@ const Layout = ({children}) => {
   if(idToken != null) {
     navItems = (
       <>
-        <li className='navbar-item'>
+        <li className='navbar-item'> 
           <NavLink to="/user" exact>User</NavLink>
         </li>
         <li className='navbar-item'>

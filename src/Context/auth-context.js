@@ -38,7 +38,6 @@ const AuthContextProvider = (props) => {
     })
   }
 
-
     // logs the user out the user page.
     const logout = () => {
       setToken(null)
@@ -69,11 +68,6 @@ const AuthContextProvider = (props) => {
       }, expiresIn * 1000)
     }
 
-    const itemModalhandler = (id) => {
-      console.log(id)
-    }
-
-
   const state = {
     setEmail,
     setPassword,
@@ -83,7 +77,6 @@ const AuthContextProvider = (props) => {
     logout,
     checkAuthentication,
     localId,
-    itemModalhandler,
   }
   
   return (

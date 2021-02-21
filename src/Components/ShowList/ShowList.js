@@ -1,24 +1,20 @@
-import React, {useContext} from 'react'
-import {AuthContext} from '../../Context/auth-context'
+import React from 'react'
 
-const ShowList = ({shows, title}) => {
-
-  const {itemModalhandler} = useContext(AuthContext)
-
-  const upComingShowsList = shows.map((show) => (
-    <li onClick={() => itemModalhandler(show)} className='shows__list-item' key={show.mal_id} >
-      <img src={show.image_url} alt=''/>
-    </li>
-  ))
-
-  return (
-    <>
-      <h2 className='title'>{title}</h2>
-      <ul className='shows__container'>
-        {upComingShowsList}
-      </ul>
-    </> 
-  )
-}
+const ShowList = (props) => {  
+    return (
+      <>
+        <h2 className='title'>{props.title}</h2>
+        <ul className='shows__container'>
+          {
+            props.shows.map((show) => (
+              <li onClick={() => props.selectShow(show.mal_id)} className='shows__list-item' key={show.mal_id} >
+              <img src={show.image_url} alt=''/>
+              </li>
+            ))
+          }
+        </ul>
+      </> 
+    )
+  }
 
 export default ShowList

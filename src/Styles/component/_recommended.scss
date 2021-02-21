@@ -1,17 +1,10 @@
-.search {
+.recommended{
+  
   &__container {
     display: flex;
     justify-content: space-evenly;
     flex-direction: row;
     flex-wrap: wrap;
-  }
-
-  &__item {
     padding-bottom: 3rem;
   }
-
-  &__btn {
-    border-radius: 4px;
-  }
-
 }

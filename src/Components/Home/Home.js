@@ -4,10 +4,9 @@ import axios from 'axios'
 import Hero from '../Hero/Hero'
 import ShowList from '../ShowList/ShowList'
 
-const Home = () => {
+const Home = (props) => {
   const [Upcoming, setUpcoming] = useState([])
   const [Airing, setAiring] = useState([])
-
 
   useEffect(() => {
     fiveAiring()
@@ -15,13 +14,13 @@ const Home = () => {
   },[])
 
   // Refactor duplicated code
-  // up-and-coming & airing - GET from API & save to state. 
-  
+  // up-and-coming & airing - GET from API & save to state.
+
   const fiveUpcoming = () => {
-    axios.get('https://anime-project-7d79f-default-rtdb.europe-west1.firebasedatabase.app/-MS0ZI07Hx7NHQteQqfH/.json')
-    // axios.get('https://anime-project-7d79f-default-rtdb.europe-west1.firebasedatabase.app/up-and-coming/.json')
+    axios.get('https://api.jikan.moe/v3/top/anime/1/upcoming')
     .then((response) => {
-      setUpcoming(response.data)
+      const listUp = response.data.top.slice(0,5)
+      setUpcoming(listUp)
     })
     .catch((error) => {
       console.log(error)
@@ -29,23 +28,28 @@ const Home = () => {
   }
 
   const fiveAiring = () => {
-    axios.get('https://anime-project-7d79f-default-rtdb.europe-west1.firebasedatabase.app/-MS0d-WhtIlfZ4-QLSkl/.json')
+    axios.get('https://api.jikan.moe/v3/top/anime/1/airing')
     .then(response => {
-      setAiring(response.data)
+      const listAir = response.data.top.slice(0,5)
+      setAiring(listAir)
     })
     .catch((error) => {
       console.log(error)
     })
   }
 
+  // SENDS US TO THE ENDPOINT
+  const selectShow = (id) => {
+    props.history.push({pathname: `/anime-preview/${id}`})
+  }
+
   return (
     <>
       <Hero/>
       
-      <ShowList shows={Upcoming} title='Upcoming'/>
+      <ShowList shows={Upcoming} title='Upcoming' selectShow={(id) => selectShow(id)}/>
 
-      <ShowList shows={Airing} title='Airing'/>
-
+      <ShowList shows={Airing} title='Airing' selectShow={(id) => selectShow(id)}/>
     </>
   )
 }
