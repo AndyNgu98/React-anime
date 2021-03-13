@@ -1,5 +1,4 @@
 import React, {useContext} from 'react'
-import Card from '../../UI/Card'
 import {AuthContext} from '../../Context/auth-context'
 import './Auth.css'
 import {Redirect} from 'react-router-dom'
@@ -14,8 +13,8 @@ const Auth = (props) => {
   }
 
   return (
-    <div className="auth">
-      <Card>
+    <section className="section auth">
+      <div className="container login">
         <div>
           <div className="form-control">
             <label>Email</label>
@@ -27,13 +26,13 @@ const Auth = (props) => {
             <input onChange={(e) => setPassword(e.target.value)} type="password"/>
           </div>
 
-          <div className="ingredient-form__actions">
+          <div className="form__actions">
             <button onClick={login}>Log In</button>
             <button onClick={register}>Register</button>
           </div>
-        </div>
-      </Card>
-    </div>
+          </div>
+      </div>
+    </section>
   )
 }
 

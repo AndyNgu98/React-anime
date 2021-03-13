@@ -1,17 +1,28 @@
 .search {
+  @extend %background-center;
+  background-image: url('../../Images/hero-search.jpg');
+
   &__container {
-    display: flex;
-    justify-content: space-evenly;
-    flex-direction: row;
-    flex-wrap: wrap;
+    text-transform: capitalize;
+    color: $color-white;
   }
 
-  &__item {
-    padding-bottom: 3rem;
+  &__input {
+    color: $color-white;
+    background: none;
+    width: 70%;
+    border: 2px solid rgba($color: #FFFFFF, $alpha: .1);
+
+    &:focus {
+      border: 2px solid rgba($color: #FFFFFF, $alpha: .5);
+    }
   }
 
-  &__btn {
-    border-radius: 4px;
+  &__subtitle {
+    color: inherit;
   }
 
+  &__title {
+    color: inherit;
+  }
 }

@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import './Home.css'
 import axios from 'axios'
 import Hero from '../Hero/Hero'
 import ShowList from '../ShowList/ShowList'
@@ -19,7 +18,7 @@ const Home = (props) => {
   const fiveUpcoming = () => {
     axios.get('https://api.jikan.moe/v3/top/anime/1/upcoming')
     .then((response) => {
-      const listUp = response.data.top.slice(0,5)
+      const listUp = response.data.top.slice(0,4)
       setUpcoming(listUp)
     })
     .catch((error) => {
@@ -30,7 +29,7 @@ const Home = (props) => {
   const fiveAiring = () => {
     axios.get('https://api.jikan.moe/v3/top/anime/1/airing')
     .then(response => {
-      const listAir = response.data.top.slice(0,5)
+      const listAir = response.data.top.slice(0,4)
       setAiring(listAir)
     })
     .catch((error) => {
@@ -38,18 +37,13 @@ const Home = (props) => {
     })
   }
 
-  // SENDS US TO THE ENDPOINT
-  const selectShow = (id) => {
-    props.history.push({pathname: `/anime-preview/${id}`})
-  }
-
   return (
     <>
-      <Hero/>
+      <Hero title='Your Anime Collection' subtitle='Watch &amp; Read anytime, anywhere' heroClass='hero__home'/>
       
-      <ShowList shows={Upcoming} title='Upcoming' selectShow={(id) => selectShow(id)}/>
+      {/* <ShowList shows={Upcoming} title='Upcoming Anime' selectShow={(id) => selectShow(id)}/> */}
 
-      <ShowList shows={Airing} title='Airing' selectShow={(id) => selectShow(id)}/>
+      {/* <ShowList shows={Airing} title='Currently Showing' selectShow={(id) => selectShow(id)}/> */}
     </>
   )
 }

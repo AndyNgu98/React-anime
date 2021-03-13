@@ -1,0 +1,35 @@
+.hero {
+  @extend %background-center;
+
+  @include breakpoint(mobile) {
+    height: 100vh;
+
+    .hero-body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &__home {
+    background-image: url('../../Images/Hero.jpg');
+  }
+  
+  &__user {
+    background-image: url('../../Images/hero-users.jpg');
+  }
+
+  &__title {
+    color: $color-white;
+    font-size: 2.5rem;
+  }
+  
+  &__subtitle {
+    color: $color-white;
+    font-size: 1.5rem;
+  }
+  
+  &__overlay {
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 58%, rgba(255,255,255,0) 100%);
+  }
+}

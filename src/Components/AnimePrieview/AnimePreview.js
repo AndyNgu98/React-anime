@@ -24,43 +24,57 @@ const AnimePreview = (props) => {
   const getCharacter = () => {
     axios.get(`https://api.jikan.moe/v3/anime/${props.match.params.id}/characters_staff`)
     .then(res => {
-      setCharacter(res.data.characters.slice(0,5))
+      setCharacter(res.data.characters.slice(0,6))
     })
     .catch((err) => {
       console.log(err)
     })
   }
 
+
+  let trailer = null
+
+  if(anime.trailer_url) {
+    trailer = <iframe title="Anime Trailer" width="100%" height="600px" src={anime.trailer_url}></iframe>
+
+  }
+
   return (
     <>
-      <div className='anime-preview__main-container'>
-        <h2 className='anime-preview__title has-text-centered'>{anime.title}</h2>
-
-          <div className='anime-preview__anime-container'>
-            <img src={anime.image_url} alt=''/>
+      {trailer}
+      <section className='section'>
+        <div className='container'>
+          <div className='columns'>
+            <div className='column is-one-quarter'>
+              <img className='preview__img' src={anime.image_url} alt={anime.title}/>
+            </div>
+            <div className='column'>
+              <h1 className='title mb-6'><a className='preview__link' target="_blank" rel="noreferrer" href={anime.url}>{anime.title}</a></h1>
+              <p className='subtitle'>{anime.synopsis}</p>
+              <p className='subtitle'>
+                { anime.score ? `Scored: ${anime.score}` : null }
+                <br />
+                {anime.rating ? `Rating: ${anime.rating}` : null}  
+              </p>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div className='anime-preview__synopsis'>
-            <p>{anime.synopsis}</p>
-          </div>
-
-          <div className='anime-preview__trailer'>
-          <h2 className='anime-preview__title has-text-centered'>Trailer</h2>
-            <iframe title="Anime Trailer" width="420" height="315" src={anime.trailer_url}></iframe>
-          </div>
-
-        <h2 className='anime-preview__title has-text-centered'>Characters</h2>
-        <div className='anime-preview__character-container'>
+      <section className='section preview'>
+        <div className='container'>
+          <div className='columns'>
           {
             characters.map((character) => (
-              <ul key={character.mal_id} >
-                  <img src={character.image_url} alt=''/>
-                  <li>{character.name}</li>
-              </ul>
+              <div className='column preview__character-img' key={character.mal_id}>
+                <img className='mb-3' src={character.image_url} alt={character.name}/>
+                <p><a className='preview__link' href={character.url} rel="noreferrer">{character.name}</a></p>
+              </div>
             ))
           }
+          </div>
         </div>
-      </div>  
+      </section>  
     </>
   )
 }

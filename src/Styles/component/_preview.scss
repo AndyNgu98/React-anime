@@ -1,0 +1,22 @@
+.preview {
+  background-color: $color-grey;
+
+  &__img{
+    width: 100%;
+  }
+
+  &__link {
+    color: $color-primary !important;
+
+    &:hover {
+      color: lighten($color-primary, 10%) !important;
+    }
+  }
+
+  &__character-img {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+  }
+}

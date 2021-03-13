@@ -1,12 +1,18 @@
 import React from 'react'
-import './Hero.css'
-import hero from '../../Images/Hero.jpg'
 
-const Hero = () => {
+const Hero = ({title, subtitle, heroClass}) => {
+
+  const classes = ['hero', 'is-large', heroClass ]
+
   return (
-    <div className='hero-container'>
-        <img className='hero-img' src={hero} alt='hero'/>
-    </div>
+    <section className={classes.join(' ')}>
+      <div className="hero-body hero__overlay">
+        <div className="container has-text-centered">
+          <p className="title hero__title">{title}</p>
+          <p className="subtitle hero__subtitle">{subtitle}</p>
+        </div>
+      </div>
+    </section>
   )
 }
 
