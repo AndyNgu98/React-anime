@@ -1,6 +1,7 @@
 import React, {useContext, useState} from 'react'
 import {NavLink, withRouter } from 'react-router-dom'
 import {AuthContext} from '../../Context/auth-context'
+import Footer from '../Footer/Footer'
 
 const Layout = ({children, history}) => {
 
@@ -22,6 +23,9 @@ const Layout = ({children, history}) => {
   if(idToken != null) {
     navItems = (
       <>
+        <li className='navbar-item'> 
+          <NavLink to="/favourites" exact activeStyle={activeStyle}>Favourites</NavLink>
+        </li>
         <li className='navbar-item'> 
           <NavLink to="/user" exact activeStyle={activeStyle}>User</NavLink>
         </li>
@@ -80,14 +84,8 @@ const Layout = ({children, history}) => {
       {children}
     </main>
     
-
-    <footer className="footer pt-6">
-      <div className="content has-text-centered">
-        <p className='pt-6'>
-          <strong>Created by Andy Nguyen</strong>
-        </p>
-      </div>
-    </footer>
+    <Footer/>
+    
   </>
   )
 }

@@ -13,7 +13,7 @@ const AuthContextProvider = (props) => {
   const login = () => authRequest('signInWithPassword')
   const register = () => authRequest('signUp')
   
-// create sign up function and creat data object to pass into the method.
+// create sign up function and create data object to pass into the method.
   const authRequest = (method) => {
     const data = {
       email,

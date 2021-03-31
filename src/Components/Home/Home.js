@@ -1,49 +1,35 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
+import React, {useContext, useEffect} from 'react'
 import Hero from '../Hero/Hero'
 import ShowList from '../ShowList/ShowList'
+import {FavContext} from '../../Context/fav-context'
 
-const Home = (props) => {
-  const [Upcoming, setUpcoming] = useState([])
-  const [Airing, setAiring] = useState([])
+const Home = () => {
 
   useEffect(() => {
-    fiveAiring()
-    fiveUpcoming()
-  },[])
+    loadFavourites()
+  }, [])
 
-  // Refactor duplicated code
-  // up-and-coming & airing - GET from API & save to state.
-
-  const fiveUpcoming = () => {
-    axios.get('https://api.jikan.moe/v3/top/anime/1/upcoming')
-    .then((response) => {
-      const listUp = response.data.top.slice(0,4)
-      setUpcoming(listUp)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
-
-  const fiveAiring = () => {
-    axios.get('https://api.jikan.moe/v3/top/anime/1/airing')
-    .then(response => {
-      const listAir = response.data.top.slice(0,4)
-      setAiring(listAir)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
-
+  const {loadFavourites, favourites, toggleFavourite} = useContext(FavContext)
+  
   return (
     <>
       <Hero title='Your Anime Collection' subtitle='Watch &amp; Read anytime, anywhere' heroClass='hero__home'/>
       
-      {/* <ShowList shows={Upcoming} title='Upcoming Anime' selectShow={(id) => selectShow(id)}/> */}
+      <ShowList 
+      endPoint={`https://api.jikan.moe/v3/top/anime/1/upcoming`} 
+      title='Upcoming Anime'
+      favourites={favourites} 
+      total={4}
+      toggleFavourite={toggleFavourite}
+      />
 
-      {/* <ShowList shows={Airing} title='Currently Showing' selectShow={(id) => selectShow(id)}/> */}
+      <ShowList 
+      endPoint={`https://api.jikan.moe/v3/top/anime/1/airing`} 
+      title='Currently Showing'
+      favourites={favourites} 
+      total={4}
+      toggleFavourite={toggleFavourite}
+      />
     </>
   )
 }

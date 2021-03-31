@@ -1,31 +1,31 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import axios from 'axios'
-import {withRouter } from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import {AuthContext} from '../../Context/auth-context'
+import {FavContext} from '../../Context/fav-context'
+import Card from '../Card/Card'
 
-const ShowList = ({ favourites, title, history, toggleFavourite, endPoint }) => {  
+const ShowList = ({ favourites, title, history, endPoint, total}) => {  
 
   const [shows, setShows] = useState([])
-  
+  const {idToken} = useContext(AuthContext)
+  const {toggleFavourite} = useContext(FavContext)
+
   useEffect(() => {    
     getPopularShows()
-    console.log(favourites)
   },[])
 
-
-
   const getPopularShows = () => { 
-    axios.get('https://api.jikan.moe/v3/top/anime/1/favorite')
+    axios.get(endPoint)
     .then(res => {
-      const data = res.data.top.slice(0,4)
+      const data = res.data.top.slice(0,total)
       setShows(data)
     })
     .catch(err => {
       console.log(err)
     })  
   }
-
-
+ 
   // SENDS US TO THE ENDPOINT
   const selectShow = (id) => {
     history.push({pathname: `/anime-preview/${id}`})
@@ -34,32 +34,33 @@ const ShowList = ({ favourites, title, history, toggleFavourite, endPoint }) => 
   const renderedShows = shows.map((show, i) => {
     const found = favourites.find(favourite => favourite.mal_id === show.mal_id)
     const classes = found ? ["fas", "fa-star", "show-list__star--active"] : ["fas", "fa-star", "show-list__star"]
+
+    let addFavourite = (
+      <>
+      </>
+    )
+
+    if(idToken !=null) {
+      addFavourite = (
+        <>
+          <span className="icon-text">
+            <span className="icon">
+              <i className={classes.join(' ')} onClick={() => toggleFavourite(show, found)}></i>
+            </span>
+            <p className='mt-3'>Add to Favorites</p>
+          </span>
+        </>
+      )
+    }
   
     return (
       <div className="column" key={show.mal_id}>
-        <div className="card show-list__card">
-          <div className="card-image">
-            <figure className="image is-4by4">
-              <img src={show.image_url} alt={show.title}/>
-            </figure>
-          </div>
-          <div className="card-content">
-            <div className="content">
-              <div>
-                <p className='show-list__title' onClick={() => selectShow(show.mal_id)}>{show.title}</p>
-                <p><i>{ show.start_date ? `Release: ${show.start_date}` : '' }</i></p>
-              </div>
-              <div className='mt-4'>
-                <span className="icon-text">
-                  <span className="icon">
-                    <i className={classes.join(' ')} onClick={() => toggleFavourite(show, found)}></i>
-                  </span>
-                  <p className='mt-3'>Add to Favorites</p>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+
+        <Card 
+        Cardshow={show}
+        selectShow={selectShow}
+        toggleFavourite={addFavourite}/>
+
       </div>
     )
   })

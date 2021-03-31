@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import axios from 'axios'
 import Spinner from '../Spinner/Spinner'
-
-import { useLocation } from 'react-router-dom'
+import {AuthContext} from '../../Context/auth-context'
+import {FavContext} from '../../Context/fav-context'
+import Card from '../Card/Card'
 
 const Search = ({history}) => {
 
@@ -11,12 +12,12 @@ const Search = ({history}) => {
   const [search, setSearch] = useState('')
   const [searchDisplay, setDisplay] = useState('')
 
-  // const useQuery = () => new URLSearchParams(useLocation().search)
-  // let searchParam = useQuery().get('s')
-  // history.location.search.split('=')[1]
-  // console.log(searchParam)
+  const {localId, idToken} = useContext(AuthContext)
+  const {loadFavourites, favourites, toggleFavourite} = useContext(FavContext)
 
-
+  useEffect(() => {
+    loadFavourites(localId)
+  }, [])
 
   useEffect(() => {
     if(history.location.state) {
@@ -56,6 +57,10 @@ const Search = ({history}) => {
       console.log(error)
     })
   }
+
+  const selectShow = (id) => {
+    history.push({pathname: `/anime-preview/${id}`})
+  }
   
   let searchDisplayMessage = <p className="subtitle search__subtitle">SEARCH:</p>
   if (searchDisplay) {
@@ -67,37 +72,57 @@ const Search = ({history}) => {
     )
   }
 
-  const selectShow = (id) => {
-    history.push({pathname: `/anime-preview/${id}`})
-  }
-
   let searchShow = <Spinner/>
   
+  // IF NOT BUFFERING SHOW SHOWLIST
   if(!loading) {
-    console.log(result)
-    searchShow = result.map((show, i) => (
-      <div className='columns' key={i}>
-        {
-          show.map((anime) =>(
-            <div className="column" key={anime.mal_id}>
-              <div className="card show-list__card">
-                <div className="card-image">
-                  <figure className="image is-4by4">
-                    <img src={anime.image_url} alt={anime.title}/>
-                  </figure>
-                </div>
-                <div className="card-content">
-                  <div className="content">
-                    <p><strong>{anime.title}</strong></p>
-                    <p><i>{anime.start_date ? `Release: ${new Date(anime.start_date).toDateString()}` : '' }</i></p> 
-                  </div>
-                </div>
+    // MAP THROUGH FIRST ARRAY
+    searchShow = result.map((show, i) => {
+      // RETURN ARRAY INTO 4 ROWS OF COLUMNS
+      return (
+        <div className='columns' key={i}>
+          {
+            // SECOND MAP TO GET SINGLE SHOW
+            show.map((anime) => {
+              // CHANGED SHOW.MAL_ID TO ANIME.MAL_ID
+              const found = favourites.find(favourite => favourite.mal_id === anime.mal_id)
+              const classes = found ? ["fas", "fa-star", "show-list__star--active"] : ["fas", "fa-star", "show-list__star"]
+
+              let addFavourite = (
+                <>
+                </>
+              )
+
+              if(idToken !=null) {
+                addFavourite = (
+                  <>
+                    <span className="icon-text">
+                      <span className="icon">
+                        {/* PASSED ON ANIME INTO SHOW */}
+                        <i className={classes.join(' ')} onClick={() => toggleFavourite(anime, found)}></i>
+                      </span>
+                      <p className='mt-3'>Add to Favorites</p>
+                    </span>
+                  </>
+                )
+              }
+              
+            return (
+              <div className="column" key={anime.mal_id}>
+
+                <Card
+                Cardshow={anime}
+                selectShow={selectShow}
+                toggleFavourite={addFavourite}
+                />                
+
               </div>
-            </div>
-          ))
-        }
-      </div>
-    ))
+              )
+            })
+          }
+        </div>
+      ) 
+    })
   }
     
   return (
