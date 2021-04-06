@@ -68,6 +68,8 @@ const FavouriteContextProvider = (props) => {
     } 
   }
 
+  
+
   const state = {
     loadFavourites,
     favourites,

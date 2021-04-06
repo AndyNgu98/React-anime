@@ -78,6 +78,8 @@ const AuthContextProvider = (props) => {
     checkAuthentication,
     localId,
   }
+
+  
   
   return (
     <AuthContext.Provider value={state}>
